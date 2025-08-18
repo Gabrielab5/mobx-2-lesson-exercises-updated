@@ -1,7 +1,6 @@
 import { observable, computed, action, makeObservable } from  'mobx'
 import {Reservation} from './ReservationStore'
 
-
 export class RestaurantStore {
     constructor() {
         this.reservations = []
@@ -31,19 +30,29 @@ export class RestaurantStore {
     get restPopulation() {
         // calculate the number of people in the restaurant now
         // (e.g. total number of people who are seated, but their reservation is not complete)
+        let counter = 0
+        this.reservations.forEach(r => r.seated && !r.completed ? counter ++ : null) 
+        return counter
     }
     get completedTables() {
         //calculate the number of tables that have been completed
+        let counter=0
+        this.reservations.forEach(r => r.completed ? counter ++ : null) 
+        return counter
     }
     addRes = (name, numPeople) => {
         this.reservations.push(new Reservation(name, numPeople))
     }
     seatRes = (id) => {
         //find the reservation and change its seated value to true
+        const seatedRes = this.reservations.find(res => res.id===id )
+        if (seatedRes) seatedRes.seated = true
     }
     completeRes = (id) => {
         //find the reservation and mark it as completed
         //after you write this function, add some conditional rendering on compelted tables
         //e.g. strike through our a different color - this will happen on your react, not here.
+        const markdRes = this.reservations.find(res => res.id===id )
+        if (markdRes && markdRes.seated) markdRes.completed = true
     }
 }
